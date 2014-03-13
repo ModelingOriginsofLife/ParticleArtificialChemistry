@@ -1,0 +1,67 @@
+<html>
+<title>jsChemistry</title>
+<head>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+</head>
+<body>
+<canvas id="myCanvas"></canvas>
+<p> 
+<script>
+
+(function()
+{
+    var canvas  = document.getElementById( 'myCanvas' );
+    var context = canvas.getContext( '2d' );
+
+    canvas.width = 1140;
+    canvas.height = 730;
+
+    // events:
+
+    function onMouseMove( evt )
+    {
+    }
+
+    function onMouseDown( evt ) {
+    }
+
+    function onMouseUp( evt ) {
+    }
+
+    function onMouseOut( evt ) {
+    }
+
+    function getMousePos( canvas, evt ) {
+    };
+          
+    window.requestAnimFrame = (function(callback)
+    {
+        return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+            function(callback) {
+                window.setTimeout(callback, 1000 / 30);
+            };
+    })();
+
+    function animate()
+    {
+        // draw the background
+        context.fillStyle = "rgb(200,200,200)";
+        context.beginPath();
+        context.fillRect( 0, 0, canvas.width, canvas.height );
+        context.closePath();
+
+        context.fillStyle = "rgb(200,100,200)";
+        context.beginPath();
+        context.fillRect( 0, 0, Math.random()*300, 200 );
+        context.closePath();
+
+        // request new frame
+        requestAnimFrame( animate );
+    }
+    animate();
+})();
+
+</script> 
+</body>
+</html>
