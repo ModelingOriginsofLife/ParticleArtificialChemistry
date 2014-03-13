@@ -3,6 +3,10 @@
 <head>
 <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
 <meta content="utf-8" http-equiv="encoding">
+<script src="point2d.js"></script>
+<script src="collision.js"></script>
+<script src="drawing.js"></script>
+<script src="math.js"></script>
 </head>
 <body>
 <canvas id="myCanvas"></canvas>
@@ -16,7 +20,18 @@
 
     canvas.width = 1140;
     canvas.height = 730;
+    
+    xSize = ySize = 50;
+    
+    var atoms = new Array();
+    for( var i = 0; i < 100; ++i )
+    {
+        atoms[i] = new Atom();
+        atoms[i].pos = new Point2D( Math.random()*xSize, Math.random()*ySize );
+        atoms[i].vel = new Point2D( Math.random()*2.0-1.0, Math.random()*2.0-1.0 );
+    }
 
+    atoms[0].vel.x=1;
     // events:
 
     function onMouseMove( evt )
@@ -42,20 +57,25 @@
                 window.setTimeout(callback, 1000 / 30);
             };
     })();
+    
+    function update()
+    {
+        //atoms[0].vel.x = 1.0;
+        iterateAll( atoms, 0.1 );
+    }
 
     function animate()
     {
+        update();
+    
         // draw the background
         context.fillStyle = "rgb(200,200,200)";
         context.beginPath();
         context.fillRect( 0, 0, canvas.width, canvas.height );
         context.closePath();
 
-        context.fillStyle = "rgb(200,100,200)";
-        context.beginPath();
-        context.fillRect( 0, 0, Math.random()*300, 200 );
-        context.closePath();
-
+        drawAtoms( atoms, context );
+    
         // request new frame
         requestAnimFrame( animate );
     }

@@ -3,29 +3,22 @@ function Point2D( x, y ) {
     this.x = x;
     this.y = y;
 };
+
 // --------------------------------------
 Point2D.prototype.add = function( p ) {
-    this.x += p.x;
-    this.y += p.y;
-    return this;
+    return new Point2D( this.x + p.x, this.y + p.y);
 };
 // --------------------------------------
 Point2D.prototype.sub = function( p ) {
-    this.x -= p.x;
-    this.y -= p.y;
-    return this;
+    return new Point2D( this.x - p.x, this.y - p.y);
 };
 // --------------------------------------
 Point2D.prototype.mul = function( f ) {
-    this.x *= f;
-    this.y *= f;
-    return this;
+    return new Point2D( this.x * f, this.y * f );
 };
 // --------------------------------------
 Point2D.prototype.div = function( f ) {
-    this.x /= f;
-    this.y /= f;
-    return this;
+    return new Point2D( this.x / f, this.y / f );
 };
 // --------------------------------------
 Point2D.prototype.dist = function( p ) {

@@ -1,7 +1,7 @@
 function Atom()
 {
-   this.pos=Point2D(0,0);
-   this.vel=Point2D(0,0);
+   this.pos = new Point2D(0,0);
+   this.vel = new Point2D(0,0);
    this.label="";
    this.next=null;
 }
@@ -15,11 +15,12 @@ function getCollision(atom1, atom2)
    
    var r2=dot(dr,dr);
    
-   if (r2<=2.0)
+   // radius = 1, so 2 radii is 2, so 2 radii squared is 4
+   if (r2<=4.0)
    {
       return {
-         dr: dr,
-	 r2: r2
+        dr: dr,
+        r2: r2
       };
    }
    else return null;
@@ -28,7 +29,7 @@ function getCollision(atom1, atom2)
 function doCollision(atom1, atom2, cparam)
 {
    var vcm=atom1.vel.add(atom2.vel);
-   vcm.mul(0.5);
+   vcm=vcm.mul(0.5);
    
    var dv=atom1.vel.sub(vcm);
    var r=Math.sqrt(cparam.r2);
@@ -37,13 +38,13 @@ function doCollision(atom1, atom2, cparam)
    
    var F=-2*dot(norm,dv);
    
-   atom1.vel=vcm+dv+F*norm;
-   atom2.vel=vcm-dv-F*norm;
+   atom1.vel=vcm.add(dv.add(norm.mul(F)));
+   atom2.vel=vcm.sub(dv.add(norm.mul(F)));
    
    var pcm=atom1.pos.add(atom2.pos);
-   pcm.mul(0.5);
+   pcm=pcm.mul(0.5);
    
-   var normalized_r = cparam.dr.mul(1.0/r);
+   var normalized_r = cparam.dr.mul(1.01/r);
    
    // Place atoms just barely in contact
    // normalized_r is unit-length version of atom1-atom2 (which has
@@ -62,32 +63,32 @@ function sortToGrid(atomarray)
    var particleGrid = [];
    var gridX=xSize/2,gridY=ySize/2;
    
-   particleGrid.resize(gridX*gridY);
+   //particleGrid.resize(gridX*gridY);
    
-   for (var i=0;i<xres*yres;i++)
+    for (var i=0;i<gridX*gridY;i++)
       particleGrid[i]=null;
       
-   for (var i=0;i<atomarray.length;i++)
-   {
+    for (var i=0;i<atomarray.length;i++)
+    {
       var x,y;
       
-      x=int(atomarray[i].pos.x/2);
-      y=int(atomarray[i].pos.y/2);
+      x=Math.floor(atomarray[i].pos.x/2);
+      y=Math.floor(atomarray[i].pos.y/2);
       
       if ((x>=0)&&(y>=0)&&(x<gridX)&&(y<gridY))
       {
-         if (!particleGrid[x+y*gridX])
-	 {
-	    atomarray[i].next=null;
-	    particleGrid[x+y*gridX]=atomarray[i];
-	 }
-	 else
-	 {
-	    atomarray[i].next=particleGrid[x+y*gridX];
-	    particleGrid[x+y*gridX]=atomarray[i];
-	 }
+        if (!particleGrid[x+y*gridX])
+        {
+            atomarray[i].next=null;
+            particleGrid[x+y*gridX]=atomarray[i];
+        }
+        else
+        {
+            atomarray[i].next=particleGrid[x+y*gridX];
+            particleGrid[x+y*gridX]=atomarray[i];
+        }
       }
-   }
+    }
    
    return particleGrid;
 }
@@ -121,7 +122,8 @@ function iterateMotion(atomarray, dt)
 {
    for (var i=0;i<atomarray.length;i++)
    {
-      atomarray[i].pos.add(atomarray[i].vel.mul(dt));
+      var dv = atomarray[i].vel.mul(dt);
+      atomarray[i].pos = atomarray[i].pos.add(dv);
       applyBoundary(atomarray[i]);
    }
 }
@@ -139,15 +141,15 @@ function doCollisions(atomarray)
    {
       var x0,y0,xm,ym;
       
-      x0=int(atomarray[i].pos.x/2);
-      y0=int(atomarray[i].pos.y/2);
+      x0=Math.floor(atomarray[i].pos.x/2);
+      y0=Math.floor(atomarray[i].pos.y/2);
       
       for (ym=y0-1;ym<=y0+1;ym++)
         for (xm=x0-1;xm<=x0+1;xm++)
 	{
 	   if ((xm>=0)&&(ym>=0)&&(xm<gridX)&&(ym<gridY))
 	   {
-	   var ptr=particleGrid[xm+ym*gridX];
+	   var ptr=pgrid[xm+ym*gridX];
 	   while (ptr)
 	   {
 	      if (ptr!=atomarray[i])
