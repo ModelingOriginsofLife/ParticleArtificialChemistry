@@ -2,7 +2,8 @@ function Atom()
 {
    this.pos = new Point2D(0,0);
    this.vel = new Point2D(0,0);
-   this.label="";
+   this.label="a0";
+   this.bonds=[];
    this.next=null;
 }
 
@@ -118,6 +119,19 @@ function applyBoundary(atom)
    }
 }
 
+function iterateBonds(atomarray, dt)
+{
+   for (var i=0;i<atomarray.length;i++)
+   {
+      for (var j=0;j<atomarray[i].bonds.length;j++)
+      { 
+         var dr=atomarray[i].pos.sub(atomarray[i].bonds[j].pos);
+	 
+	 atomarray[i].vel = (atomarray[i].vel.sub(dr.mul(dt)));
+      }
+   }
+}
+
 function iterateMotion(atomarray, dt)
 {
    for (var i=0;i<atomarray.length;i++)
@@ -126,10 +140,6 @@ function iterateMotion(atomarray, dt)
       atomarray[i].pos = atomarray[i].pos.add(dv);
       applyBoundary(atomarray[i]);
    }
-}
-
-function doReaction(atom1, atom2)
-{
 }
 
 function doCollisions(atomarray)
@@ -170,6 +180,7 @@ function doCollisions(atomarray)
 
 function iterateAll(atomarray, dt)
 {
+   iterateBonds(atomarray,dt);
    iterateMotion(atomarray,dt);
    doCollisions(atomarray);  
 }

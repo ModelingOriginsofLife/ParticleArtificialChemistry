@@ -5,6 +5,7 @@
 <meta content="utf-8" http-equiv="encoding">
 <script src="point2d.js"></script>
 <script src="collision.js"></script>
+<script src="reaction.js"></script>
 <script src="drawing.js"></script>
 <script src="math.js"></script>
 </head>
@@ -29,6 +30,7 @@
         atoms[i] = new Atom();
         atoms[i].pos = new Point2D( Math.random()*xSize, Math.random()*ySize );
         atoms[i].vel = new Point2D( Math.random()*2.0-1.0, Math.random()*2.0-1.0 );
+	atoms[i].label = "f0";
     }
 
     atoms[0].vel.x=1;
