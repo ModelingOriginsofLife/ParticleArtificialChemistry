@@ -182,6 +182,7 @@ Reaction.prototype.getProducts = function(atom1, atom2, isbonded)
 
 var reactions = 
 [
+   /* // 2002 ruleset: works when single atoms can easily cross a bond
    new Reaction("e8", "e0", "e4", "e3",  0,  1),
    new Reaction("*4", "&1", "*2", "&5", 1, 1),
    new Reaction("*5", "*0", "*7", "*6",  0,  1),
@@ -190,6 +191,20 @@ var reactions =
    new Reaction("f4", "f3", "f8", "f8", 1, 0),
    new Reaction("*2", "&8", "*9", "&1", 1, 1),
    new Reaction("*9", "&9", "*8", "&8", 1, 0)
+   */
+
+   // adapted from 2007 paper, allows bonding from either side
+   // so more suitable for a continuous-space simulation
+   new Reaction( "e8", "e0", "e2", "e3", 0, 1 ),
+   new Reaction( "*2", "&1", "*7", "&4", 1, 1 ),
+   new Reaction( "*4", "&3", "*5", "&7", 0, 1 ),
+   new Reaction( "*5", "*0", "*6", "*6", 0, 1 ),
+   new Reaction( "*6", "&7", "*3", "&4", 0, 1 ),
+   new Reaction( "*6", "&4", "*1", "&2", 1, 0 ),
+   new Reaction( "*7", "&1", "*2", "&2", 1, 1 ),
+   new Reaction( "f2", "f3", "f8", "f8", 1, 0 ),
+   new Reaction( "*2", "&8", "*9", "&1", 1, 1 ),
+   new Reaction( "*9", "&9", "*8", "&8", 1, 0 )
 ];
 
 function contains(arr, obj)
