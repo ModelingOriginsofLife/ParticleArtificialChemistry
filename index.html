@@ -16,6 +16,7 @@
 
 (function()
 {
+    var chararray = [ 'a', 'b', 'c', 'd', 'e', 'f' ];
     var canvas  = document.getElementById( 'myCanvas' );
     var context = canvas.getContext( '2d' );
 
@@ -27,10 +28,11 @@
     var atoms = new Array();
     for( var i = 0; i < 100; ++i )
     {
+        var charidx = Math.floor(Math.random()*chararray.length);
         atoms[i] = new Atom();
         atoms[i].pos = new Point2D( Math.random()*xSize, Math.random()*ySize );
         atoms[i].vel = new Point2D( Math.random()*2.0-1.0, Math.random()*2.0-1.0 );
-	atoms[i].label = "f0";
+	atoms[i].label = chararray[charidx] + "0";
     }
 
     atoms[0].vel.x=1;

@@ -11,75 +11,82 @@ function Reaction(reac1, reac2, prod1, prod2, prebond, postbond)
 
 function matchLabel(atom, label, wildcard)
 {
-   var widx;
+   var widx=-1;
    
    if (atom.label[0]!=label[0])
    {
       switch (label[0])
       {
-         case '*': widx=0;
-	 case '&': widx=1;
-	 case '%': widx=2;
-	 case '^': widx=3;
-	   if (!wildcard[widx]) wildcard[widx]=atom.label[0];
-	   else 
-	   {
-	      if (wildcard[widx]!=atom.label[0]) return 0;
-	   }
-	   break;
+         case '*': widx=0; break;
+	 case '&': widx=1; break;
+	 case '%': widx=2; break;
+	 case '^': widx=3; break;
+	   
 	 default:
 	    return 0;
       }
    }
-
+   if (widx!=-1)
+   {
+      if (!wildcard[widx]) wildcard[widx]=atom.label[0];
+      else 
+      {
+         if (wildcard[widx]!=atom.label[0]) return 0;
+      }
+   }
+ 
+   widx=-1;
    if (atom.label[1]!=label[1])
    {
       switch (label[1])
       {
-         case '*': widx=0;
-	 case '&': widx=1;
-	 case '%': widx=2;
-	 case '^': widx=3;
-	   if (!wildcard[widx]) wildcard[widx]=atom.label[1];
-	   else 
-	   {
-	      if (wildcard[widx]!=atom.label[1]) return 0;
-	   }
-	   break;
+         case '*': widx=0; break;
+	 case '&': widx=1; break;
+	 case '%': widx=2; break;
+	 case '^': widx=3; break;
 	 default:
 	    return 0;
       }
    }
    
+   if (widx!=-1)
+   {
+      if (!wildcard[widx]) wildcard[widx]=atom.label[1];
+      else 
+      {
+         if (wildcard[widx]!=atom.label[1]) return 0;
+      }
+   }
    return 1;
 }
 
 function makeProduct(pstring, wildcard)
 {
-   var product=pstring;
-   var widx=0;
+   var product=pstring.split("");
+   var widx=-1;
    
-   switch (product[0])
+   switch (pstring[0])
    {
-      case '*': widx=0;
-      case '&': widx=1; 
-      case '%': widx=2;
-      case '^': widx=3;
-        product[0]=wildcard[widx];
-        break;
+      case '*': widx=0; break;
+      case '&': widx=1; break;
+      case '%': widx=2; break;
+      case '^': widx=3; break;
    }
+   
+   if (widx != -1) product[0]=wildcard[widx]; 
 
-   switch (product[1])
+   widx=-1;
+   switch (pstring[1])
    {
-      case '*': widx=0;
-      case '&': widx=1; 
-      case '%': widx=2;
-      case '^': widx=3;
-        product[1]=wildcard[widx];
-        break;
+      case '*': widx=0; break;
+      case '&': widx=1; break;
+      case '%': widx=2; break;
+      case '^': widx=3; break;
    }
    
-   return product;
+   if (widx != -1) product[1]=wildcard[widx];
+       
+   return product.join("");
 }
 
 Reaction.prototype.checkReactants = function(atom1, atom2, isbonded)
@@ -134,6 +141,8 @@ Reaction.prototype.getProducts = function(atom1, atom2, isbonded)
       {
          products.prod1=makeProduct(this.prod1,wildcard);
 	 products.prod2=makeProduct(this.prod2,wildcard);
+	 
+	 return products;
       }
    
    wildcard = [];
@@ -143,6 +152,8 @@ Reaction.prototype.getProducts = function(atom1, atom2, isbonded)
       {
          products.prod1=makeProduct(this.prod2,wildcard);
 	 products.prod2=makeProduct(this.prod1,wildcard);
+	 
+	 return products;
       }
       
    return products;
