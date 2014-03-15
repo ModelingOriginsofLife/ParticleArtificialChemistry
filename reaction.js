@@ -1,3 +1,24 @@
+function addMolecule(labels, x0, y0, atomarray)
+{
+   for (var i=0;i<labels.length;i++)
+   {
+      var atom = new Atom();
+      atom.pos.x=x0+i*2; atom.pos.y=y0;
+      atom.vel.x=Math.random()*2.0-1.0;
+      atom.vel.y=Math.random()*2.0-1.0;
+      atom.label=labels[i];
+      atom.bonds=[];
+      atomarray.push(atom);
+      if (i>0) 
+      {
+         atomarray[atomarray.length-1].bonds.push(
+	    atomarray[atomarray.length-2]);
+         atomarray[atomarray.length-2].bonds.push(
+	    atomarray[atomarray.length-1]);
+      }
+   }
+}
+
 function Reaction(reac1, reac2, prod1, prod2, prebond, postbond)
 {
    this.reac1=reac1;
@@ -161,9 +182,14 @@ Reaction.prototype.getProducts = function(atom1, atom2, isbonded)
 
 var reactions = 
 [
-   new Reaction("f0", "f0", "f1", "f2",  0,  1),
-   new Reaction("*0", "f1", "*1", "f1", -1, -1),
-   new Reaction("*1", "*0", "*1", "*1",  0,  1),
+   new Reaction("e8", "e0", "e4", "e3",  0,  1),
+   new Reaction("*4", "&1", "*2", "&5", 1, 1),
+   new Reaction("*5", "*0", "*7", "*6",  0,  1),
+   new Reaction("*3", "&6", "*2", "&3", 0, 1),
+   new Reaction("*7", "&3", "*4", "&3", 1, 1),
+   new Reaction("f4", "f3", "f8", "f8", 1, 0),
+   new Reaction("*2", "&8", "*9", "&1", 1, 1),
+   new Reaction("*9", "&9", "*8", "&8", 1, 0)
 ];
 
 function contains(arr, obj)
@@ -211,8 +237,8 @@ function doReaction(atom1, atom2)
       
       if (isbonded && !products.newbond)
       {
-         atom1.bonds.remove(atom2);
-	 atom2.bonds.remove(atom1);
+         remove(atom1.bonds,atom2);//.remove(atom2);
+	 remove(atom2.bonds,atom1);//.remove(atom1);
       }
       
       if (!isbonded && products.newbond)

@@ -127,7 +127,7 @@ function iterateBonds(atomarray, dt)
       { 
          var dr=atomarray[i].pos.sub(atomarray[i].bonds[j].pos);
 	 
-	 atomarray[i].vel = (atomarray[i].vel.sub(dr.mul(dt)));
+	 atomarray[i].vel = (atomarray[i].vel.sub(dr.mul(0.25*dt)));
       }
    }
 }

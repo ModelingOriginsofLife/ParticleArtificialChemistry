@@ -26,7 +26,7 @@
     xSize = ySize = 50;
     
     var atoms = new Array();
-    for( var i = 0; i < 100; ++i )
+    for( var i = 0; i < 200; ++i )
     {
         var charidx = Math.floor(Math.random()*chararray.length);
         atoms[i] = new Atom();
@@ -35,7 +35,7 @@
 	atoms[i].label = chararray[charidx] + "0";
     }
 
-    atoms[0].vel.x=1;
+    addMolecule(["e8","b1","b1","b1","b1","f1"],10,20,atoms);
     // events:
 
     function onMouseMove( evt )
@@ -65,7 +65,8 @@
     function update()
     {
         //atoms[0].vel.x = 1.0;
-        iterateAll( atoms, 0.1 );
+        iterateAll( atoms, 0.2 );
+        iterateAll( atoms, 0.2 );
     }
 
     function animate()
