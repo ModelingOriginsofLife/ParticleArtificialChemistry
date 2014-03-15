@@ -24,15 +24,18 @@ canvas.height = 730;
 xSize = ySize = 50;
 
 var atoms = new Array();
+setupInteractionMatrix();
+
 for( var i = 0; i < 200; ++i )
 {
     var charidx = Math.floor(Math.random()*chararray.length);
     atoms[i] = new Atom();
     atoms[i].pos = new Point2D( Math.random()*xSize, Math.random()*ySize );
     atoms[i].vel = new Point2D( Math.random()*2.0-1.0, Math.random()*2.0-1.0 );
-atoms[i].label = chararray[charidx] + "0";
+    atoms[i].label = chararray[charidx] + "0";
 }
 
+//addMolecule(["a1","b1"],10,20,atoms);
 addMolecule(["e8","b1","a1","d1","d1","b1","c1","f1"],10,20,atoms);
 // events:
 
@@ -40,8 +43,14 @@ function onMouseMove( evt )
 {
 }
 
+var pause = false;
+
 function onMouseDown( evt ) {
+   pause = !pause;
+   console.log("test");
 }
+
+window.onmousedown=onMouseDown;
 
 function onMouseUp( evt ) {
 }
@@ -63,6 +72,7 @@ window.requestAnimFrame = (function(callback)
 function update()
 {
     var speed = 10;
+    if (!pause)
     for( var i = 0; i < speed; ++i )
     {
         iterateAll( atoms, 0.2 );

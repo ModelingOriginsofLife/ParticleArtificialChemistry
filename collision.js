@@ -100,11 +100,13 @@ function applyBoundary(atom)
    {
       atom.pos.x=0;
       atom.vel.x*=-1;
+//      atom.vel.x+=Math.sqrt(0.2)*(Math.random()*2-1);
+//      atom.vel.y+=Math.sqrt(0.2)*(Math.random()*2-1);
    }
    if (atom.pos.x>xSize)
    {
       atom.pos.x=xSize;
-      atom.vel.x*=-1;
+      atom.vel.x*=-1.0;
    }
 
    if (atom.pos.y<0)

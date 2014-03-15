@@ -1,3 +1,5 @@
+var interactionMatrix = [];
+
 function addMolecule(labels, x0, y0, atomarray)
 {
    for (var i=0;i<labels.length;i++)
@@ -28,6 +30,14 @@ function Reaction(reac1, reac2, prod1, prod2, prebond, postbond)
    
    this.prebond=prebond;
    this.postbond=postbond;
+}
+
+Reaction.prototype.reverseReaction = function()
+{
+   var newReaction = new Reaction(this.prod1, this.prod2, this.reac1,
+                                  this.reac2, this.postbond, this.prebond);
+				     
+   return newReaction;
 }
 
 function matchLabel(atom, label, wildcard)
@@ -139,6 +149,22 @@ Reaction.prototype.checkReactants = function(atom1, atom2, isbonded)
    return 0;
 };
 
+Reaction.prototype.deltaE = function(atom1, atom2, isbonded)
+{
+   var prebond=isbonded;
+   var postbond=isbonded;
+   
+   if (this.postbond==1) postbond=true;
+   if (this.postbond==0) postbond=false;
+   
+   var previous=0.0, post=0.0;
+   
+   if (prebond) previous=interactionMatrix[atom1.label[0]+atom2.label[0]];
+   if (postbond) post=interactionMatrix[atom1.label[0]+atom2.label[0]];
+
+   return post-previous;
+}
+
 Reaction.prototype.getProducts = function(atom1, atom2, isbonded)
 {
    var wildcard = []; // values of wildcard characters *, &, %, ^
@@ -195,7 +221,7 @@ var reactions =
 
    // adapted from 2007 paper, allows bonding from either side
    // so more suitable for a continuous-space simulation
-   new Reaction( "e8", "e0", "e2", "e3", 0, 1 ),
+/*   new Reaction( "e8", "e0", "e2", "e3", 0, 1 ),
    new Reaction( "*2", "&1", "*7", "&4", 1, 1 ),
    new Reaction( "*4", "&3", "*5", "&7", 0, 1 ),
    new Reaction( "*5", "*0", "*6", "*6", 0, 1 ),
@@ -204,8 +230,50 @@ var reactions =
    new Reaction( "*7", "&1", "*2", "&2", 1, 1 ),
    new Reaction( "f2", "f3", "f8", "f8", 1, 0 ),
    new Reaction( "*2", "&8", "*9", "&1", 1, 1 ),
-   new Reaction( "*9", "&9", "*8", "&8", 1, 0 )
+   new Reaction( "*9", "&9", "*8", "&8", 1, 0 )*/
+   
+   // Template directed synthesis attempt
+/*   new Reaction("*0","*1","*3","*6",0,1),
+   new Reaction("*3","&3","*4","&4",0,1),
+   new Reaction("*3","&4","*3","&5",0,1),
+   new Reaction("*4","&4","*5","&5",0,1),
+   new Reaction("*4","&4","*5","&5",1,1),
+   new Reaction("*5","*6","*1","*2",1,0),
+
+   new Reaction("*0","*2","*7","*A",0,1),
+   new Reaction("*7","&7","*8","&8",0,1),
+   new Reaction("*7","&8","*7","&9",0,1),
+   new Reaction("*8","&8","*9","&9",0,1),
+   new Reaction("*8","&8","*9","&9",1,1),
+   new Reaction("*9","*A","*2","*1",1,0),*/
+   
+   new Reaction("e8","e0","e2","e3",0,1),
+   new Reaction("*2","&1","*7","&4",1,1),
+   new Reaction("*4","&3","*5","&7",0,1),
+   new Reaction("*5","*0","*6","*B",0,1),
+   new Reaction("*B","&7","*3","&4",0,1),
+   new Reaction("*6","&4","*1","&2",1,0),
+   new Reaction("*7","&1","*A","&2",1,1),
+   new Reaction("*A","&1","*7","&4",1,1),
+   new Reaction("f2","f3","f8","fD",1,0),
+   new Reaction("*2","&D","*9","&1",1,1),
+   new Reaction("*A","&8","*C","&1",1,1),
+   new Reaction("*C","&9","*8","&D",1,0),
+   new Reaction("*D","&1","*8","&1",1,1)
 ];
+
+function setupInteractionMatrix()
+{
+   var chararray = ['a','b','c','d','e','f','g'];
+   
+   for (var j=0;j<7;j++)
+     for (var i=0;i<=j;i++)
+     {
+        var energy=-0.5;
+        interactionMatrix[chararray[i]+chararray[j]]=energy;
+        interactionMatrix[chararray[j]+chararray[i]]=energy;
+     }     
+}
 
 function contains(arr, obj)
 {
@@ -227,21 +295,36 @@ function remove(arr, item)
    }
 }
 
+function pickRandomReaction()
+{
+}
+
 function doReaction(atom1, atom2)
 {
    var bond=contains(atom1.bonds,atom2);
    var isbonded=true;
-   
    if (bond === null) isbonded=false;
+   
+   var vbar=atom1.vel.add(atom2.vel); vbar = vbar.mul(0.5);
+   
+   var dv=atom1.vel.sub(vbar);
+   var energy=dot(dv,dv); if (energy<1e-4) energy=1e-4;
+
+   dv=dv.mul(1.0/Math.sqrt(energy));
    
    var possible=[];
    
    for (var i=0;i<reactions.length;i++)
    {
       if (reactions[i].checkReactants(atom1, atom2, isbonded))
-      {
-         possible.push(reactions[i]);
-      }
+//         if (energy>=reactions[i].deltaE(atom1,atom2,isbonded))
+	    possible.push(reactions[i]);
+      
+/*      var reverse=reactions[i].reverseReaction();
+      
+      if (reverse.checkReactants(atom1, atom2, isbonded))
+         if (energy>=reverse.deltaE(atom1,atom2,isbonded))
+            possible.push(reverse);*/
    }   
    
    if (possible.length)
@@ -250,6 +333,16 @@ function doReaction(atom1, atom2)
       
       var products=possible[j].getProducts(atom1,atom2,isbonded);
       
+ //     energy-=possible[j].deltaE(atom1,atom2,isbonded);
+      
+      dv=dv.mul(Math.sqrt(energy));      
+      atom1.vel=vbar.add(dv);
+      atom2.vel=vbar.sub(dv);
+       /*     
+      console.log(possible[j].reac1+(possible[j].prebond ? "" : " + ")+possible[j].reac2+" -> " +
+                  possible[j].prod1+(possible[j].postbond ? "" : " +")+possible[j].prod2+
+                  "; Atoms: "+atom1.label+", "+atom2.label);
+	*/	  
       if (isbonded && !products.newbond)
       {
          remove(atom1.bonds,atom2);//.remove(atom2);
@@ -259,9 +352,9 @@ function doReaction(atom1, atom2)
       if (!isbonded && products.newbond)
       {
          atom1.bonds.push(atom2);
-	 atom2.bonds.push(atom1);
+	 atom2.bonds.push(atom1);	 
       }
-      
+            
       atom1.label=products.prod1;
       atom2.label=products.prod2;
    }
