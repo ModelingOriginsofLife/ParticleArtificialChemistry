@@ -208,16 +208,17 @@ Reaction.prototype.getProducts = function(atom1, atom2, isbonded)
 
 var reactions = 
 [
-   /* // 2002 ruleset: works when single atoms can easily cross a bond
+   // 2002 ruleset: works when single atoms can easily cross a bond
    new Reaction("e8", "e0", "e4", "e3",  0,  1),
-   new Reaction("*4", "&1", "*2", "&5", 1, 1),
+   new Reaction("*4", "&1", "*A", "&5", 1, 1),
    new Reaction("*5", "*0", "*7", "*6",  0,  1),
    new Reaction("*3", "&6", "*2", "&3", 0, 1),
    new Reaction("*7", "&3", "*4", "&3", 1, 1),
    new Reaction("f4", "f3", "f8", "f8", 1, 0),
    new Reaction("*2", "&8", "*9", "&1", 1, 1),
-   new Reaction("*9", "&9", "*8", "&8", 1, 0)
-   */
+   new Reaction("*9", "&9", "*8", "&8", 1, 0),
+   new Reaction("*A", "&8", "*9", "&1", 1, 1)
+   
 
    // adapted from 2007 paper, allows bonding from either side
    // so more suitable for a continuous-space simulation
@@ -246,7 +247,7 @@ var reactions =
    new Reaction("*8","&8","*9","&9",0,1),
    new Reaction("*8","&8","*9","&9",1,1),
    new Reaction("*9","*A","*2","*1",1,0),*/
-   
+/*   
    new Reaction("e8","e0","e2","e3",0,1),
    new Reaction("*2","&1","*7","&4",1,1),
    new Reaction("*4","&3","*5","&7",0,1),
@@ -259,7 +260,7 @@ var reactions =
    new Reaction("*2","&D","*9","&1",1,1),
    new Reaction("*A","&8","*C","&1",1,1),
    new Reaction("*C","&9","*8","&D",1,0),
-   new Reaction("*D","&1","*8","&1",1,1)
+   new Reaction("*D","&1","*8","&1",1,1)*/
 ];
 
 function setupInteractionMatrix()
@@ -269,7 +270,7 @@ function setupInteractionMatrix()
    for (var j=0;j<7;j++)
      for (var i=0;i<=j;i++)
      {
-        var energy=-0.5;
+        var energy=-0.25;
         interactionMatrix[chararray[i]+chararray[j]]=energy;
         interactionMatrix[chararray[j]+chararray[i]]=energy;
      }     
@@ -317,14 +318,14 @@ function doReaction(atom1, atom2)
    for (var i=0;i<reactions.length;i++)
    {
       if (reactions[i].checkReactants(atom1, atom2, isbonded))
-//         if (energy>=reactions[i].deltaE(atom1,atom2,isbonded))
+         if (energy>=reactions[i].deltaE(atom1,atom2,isbonded))
 	    possible.push(reactions[i]);
       
-/*      var reverse=reactions[i].reverseReaction();
+      var reverse=reactions[i].reverseReaction();
       
       if (reverse.checkReactants(atom1, atom2, isbonded))
          if (energy>=reverse.deltaE(atom1,atom2,isbonded))
-            possible.push(reverse);*/
+            possible.push(reverse);
    }   
    
    if (possible.length)
@@ -333,7 +334,7 @@ function doReaction(atom1, atom2)
       
       var products=possible[j].getProducts(atom1,atom2,isbonded);
       
- //     energy-=possible[j].deltaE(atom1,atom2,isbonded);
+      energy-=possible[j].deltaE(atom1,atom2,isbonded);
       
       dv=dv.mul(Math.sqrt(energy));      
       atom1.vel=vbar.add(dv);

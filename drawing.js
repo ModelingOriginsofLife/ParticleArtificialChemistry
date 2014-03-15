@@ -20,6 +20,8 @@ function drawAtoms( atoms, ctx )
     for( var i = 0; i < atoms.length; ++i )
     {
         var atom = atoms[i];
+        if (atom.bonds.length)
+	{
         ctx.fillStyle = getTypeColor(atoms[i].label[0]);
         ctx.beginPath();
         ctx.arc( atom.pos.x * scale, atom.pos.y * scale, scale, 0, 2*Math.PI );
@@ -40,6 +42,7 @@ function drawAtoms( atoms, ctx )
 	   ctx.lineTo( otheratom.pos.x * scale, otheratom.pos.y * scale );
 	   ctx.stroke();
 	   ctx.closePath();
+	}
 	}
     }
 }

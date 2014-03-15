@@ -36,7 +36,7 @@ for( var i = 0; i < 200; ++i )
 }
 
 //addMolecule(["a1","b1"],10,20,atoms);
-addMolecule(["e8","b1","a1","d1","d1","b1","c1","f1"],10,20,atoms);
+addMolecule(["e8","b1",/*"a1","d1","d1","b1","c1",*/"f1"],10,20,atoms);
 // events:
 
 function onMouseMove( evt )
@@ -71,7 +71,7 @@ window.requestAnimFrame = (function(callback)
 
 function update()
 {
-    var speed = 10;
+    var speed = 100;
     if (!pause)
     for( var i = 0; i < speed; ++i )
     {
