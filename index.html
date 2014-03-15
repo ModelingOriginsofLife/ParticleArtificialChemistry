@@ -14,78 +14,78 @@
 <p> 
 <script>
 
-(function()
+var chararray = [ 'a', 'b', 'c', 'd', 'e', 'f' ];
+var canvas  = document.getElementById( 'myCanvas' );
+var context = canvas.getContext( '2d' );
+
+canvas.width = 1140;
+canvas.height = 730;
+
+xSize = ySize = 50;
+
+var atoms = new Array();
+for( var i = 0; i < 200; ++i )
 {
-    var chararray = [ 'a', 'b', 'c', 'd', 'e', 'f' ];
-    var canvas  = document.getElementById( 'myCanvas' );
-    var context = canvas.getContext( '2d' );
+    var charidx = Math.floor(Math.random()*chararray.length);
+    atoms[i] = new Atom();
+    atoms[i].pos = new Point2D( Math.random()*xSize, Math.random()*ySize );
+    atoms[i].vel = new Point2D( Math.random()*2.0-1.0, Math.random()*2.0-1.0 );
+atoms[i].label = chararray[charidx] + "0";
+}
 
-    canvas.width = 1140;
-    canvas.height = 730;
-    
-    xSize = ySize = 50;
-    
-    var atoms = new Array();
-    for( var i = 0; i < 200; ++i )
-    {
-        var charidx = Math.floor(Math.random()*chararray.length);
-        atoms[i] = new Atom();
-        atoms[i].pos = new Point2D( Math.random()*xSize, Math.random()*ySize );
-        atoms[i].vel = new Point2D( Math.random()*2.0-1.0, Math.random()*2.0-1.0 );
-	atoms[i].label = chararray[charidx] + "0";
-    }
+addMolecule(["e8","b1","a1","d1","d1","b1","c1","f1"],10,20,atoms);
+// events:
 
-    addMolecule(["e8","b1","a1","d1","d1","b1","c1","f1"],10,20,atoms);
-    // events:
+function onMouseMove( evt )
+{
+}
 
-    function onMouseMove( evt )
-    {
-    }
+function onMouseDown( evt ) {
+}
 
-    function onMouseDown( evt ) {
-    }
+function onMouseUp( evt ) {
+}
 
-    function onMouseUp( evt ) {
-    }
+function onMouseOut( evt ) {
+}
 
-    function onMouseOut( evt ) {
-    }
-
-    function getMousePos( canvas, evt ) {
-    };
-          
-    window.requestAnimFrame = (function(callback)
-    {
-        return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
-            function(callback) {
-                window.setTimeout(callback, 1000 / 30);
-            };
-    })();
-    
-    function update()
-    {
-        //atoms[0].vel.x = 1.0;
-        iterateAll( atoms, 0.2 );
-        iterateAll( atoms, 0.2 );
-    }
-
-    function animate()
-    {
-        update();
-    
-        // draw the background
-        context.fillStyle = "rgb(200,200,200)";
-        context.beginPath();
-        context.fillRect( 0, 0, canvas.width, canvas.height );
-        context.closePath();
-
-        drawAtoms( atoms, context );
-    
-        // request new frame
-        requestAnimFrame( animate );
-    }
-    animate();
+function getMousePos( canvas, evt ) {
+};
+      
+window.requestAnimFrame = (function(callback)
+{
+    return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+        function(callback) {
+            window.setTimeout(callback, 1000 / 30);
+        };
 })();
+
+function update()
+{
+    var speed = 10;
+    for( var i = 0; i < speed; ++i )
+    {
+        iterateAll( atoms, 0.2 );
+    }
+}
+
+function animate()
+{
+    update();
+
+    // draw the background
+    context.fillStyle = "rgb(200,200,200)";
+    context.beginPath();
+    context.fillRect( 0, 0, canvas.width, canvas.height );
+    context.closePath();
+
+    drawAtoms( atoms, context );
+
+    // request new frame
+    requestAnimFrame( animate );
+}
+
+animate();
 
 </script> 
 </body>
