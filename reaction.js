@@ -176,7 +176,7 @@ Reaction.prototype.deltaE = function(atom1, atom2, isbonded)
    if (prebond) previous=interactionMatrix[atom1.label[0]+atom2.label[0]];
    if (postbond) post=interactionMatrix[atom1.label[0]+atom2.label[0]];
 
-   return post-previous;
+   return post-previous; // unbonding reactions are uphill (positive deltaE), bonding reactions are downhill (negative deltaE), others are neutral
 }
 
 Reaction.prototype.getProducts = function(atom1, atom2, isbonded)
@@ -276,6 +276,7 @@ var reactions =
    new Reaction("*C","&9","*8","&D",1,0),
    new Reaction("*D","&1","*8","&1",1,1)*/
    
+    /*
     // A version of Dave Mann's message-passing replicator
     new Reaction( "*1", "&D", "*D", "&1", 1, 1 ), // message-passing
     new Reaction( "*2", "&D", "*D", "&2", 1, 1 ),
@@ -300,8 +301,35 @@ var reactions =
     new Reaction( "bF", "*D", "b2", "*F", 1, 1 ),
     new Reaction( "cF", "*D", "c3", "*F", 1, 1 ),
     new Reaction( "dF", "*D", "d4", "*F", 1, 1 ),
-    new Reaction( "fF", "fF", "fC", "fC", 1, 0 ) // final unbonding
+    new Reaction( "fF", "fF", "fC", "fC", 1, 0 ), // the final unbonding
+    * */
     
+    // A version of Dave Mann's message-passing replicator that works in the presence of thermodynamic reversibility
+    new Reaction( "*1", "&D", "*D", "&1", 1, 1 ), // message-passing
+    new Reaction( "*2", "&D", "*D", "&2", 1, 1 ),
+    new Reaction( "*3", "&D", "*D", "&3", 1, 1 ),
+    new Reaction( "*4", "&D", "*D", "&4", 1, 1 ),
+    new Reaction( "*5", "&D", "*D", "&5", 1, 1 ),
+    new Reaction( "*6", "&D", "*D", "&6", 1, 1 ),
+    new Reaction( "*7", "a0", "*D", "aE", 0, 1 ), // bond the appropriate type
+    new Reaction( "*8", "b0", "*D", "bE", 0, 1 ),
+    new Reaction( "*9", "c0", "*D", "cE", 0, 1 ),
+    new Reaction( "*A", "d0", "*D", "dE", 0, 1 ),
+    new Reaction( "*B", "e0", "*D", "eF", 0, 1 ), // (if bonded an 'e' then we start the reset)
+    new Reaction( "*C", "f0", "*D", "fE", 0, 1 ),
+    new Reaction( "*1", "&E", "*D", "&7", 1, 1 ), // activate for the next one to the bonded
+    new Reaction( "*2", "&E", "*D", "&8", 1, 1 ),
+    new Reaction( "*3", "&E", "*D", "&9", 1, 1 ),
+    new Reaction( "*4", "&E", "*D", "&A", 1, 1 ),
+    new Reaction( "*5", "&E", "*D", "&B", 1, 1 ),
+    new Reaction( "aF", "*D", "a1", "*F", 1, 1 ), // reset passes over a base
+    new Reaction( "bF", "*D", "b2", "*F", 1, 1 ),
+    new Reaction( "cF", "*D", "c3", "*F", 1, 1 ),
+    new Reaction( "dF", "*D", "d4", "*F", 1, 1 ),
+    new Reaction( "eF", "*D", "e5", "*F", 1, 1 ),
+    new Reaction( "fF", "fD", "fC", "fF", 1, 0 ), // unbonds when the reset passes over the f-f
+    new Reaction( "fF", "dD", "fG", "dF", 1, 1 ), // reset continues after the f-f unbonding, but requires a 'd' to be next // G for debug only!
+    new Reaction( "eF", "fG", "e5", "fC", 0, 0 ), // reset finishes at the top by bumping into the other end
 ];
 
 function setupInteractionMatrix()
@@ -393,11 +421,14 @@ function doReaction( atom1, atom2 )
         dv = dv.mul( Math.sqrt(energy) );      
         atom1.vel = vbar.add( dv );
         atom2.vel = vbar.sub( dv );
-        /*     
-        console.log(possible[j].reac1+(possible[j].prebond ? "" : " + ")+possible[j].reac2+" -> " +
-        possible[j].prod1+(possible[j].postbond ? "" : " +")+possible[j].prod2+
-        "; Atoms: "+atom1.label+", "+atom2.label);
-        */	  
+             
+        if( logReactions )
+        {
+            console.log(possible[j].reac1+(possible[j].prebond ? "" : " + ")+possible[j].reac2+" -> " +
+                possible[j].prod1+(possible[j].postbond ? "" : " +")+possible[j].prod2+
+                "; Atoms: "+atom1.label+", "+atom2.label);
+        }   
+
         if (isbonded && !products.newbond)
         {
             remove(atom1.bonds,atom2);//.remove(atom2);

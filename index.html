@@ -10,21 +10,36 @@
 <script src="math.js"></script>
 </head>
 <body>
+
+<body onload="animate();"><body> <!-- avoid starting twice -->
+
 <canvas id="myCanvas"></canvas>
+<p>
+<button type="button" onclick="pause = !pause;">Pause/Play</button>
+<button type="button" onclick="speed=100;">Fast</button>
+<button type="button" onclick="speed=5;">Medium</button>
+<button type="button" onclick="speed=1;">Slow</button>
+<p>
+<button type="button" onclick="show_unbonded_atoms = !show_unbonded_atoms;">Show the bath</button>
+<button type="button" onclick="withTemperatureGradient = !withTemperatureGradient;">Toggle temperature gradient</button>
 <p> 
 <script>
     
-var withReversibility = false;
-var withTemperatureGradient = false;
+var withReversibility = true;
+var withTemperatureGradient = true;
+var speed = 5;
+var logReactions = false;
+var scale = 10.0;
+var show_unbonded_atoms = false;
 
 var chararray = [ 'a', 'b', 'c', 'd', 'e', 'f' ];
 var canvas  = document.getElementById( 'myCanvas' );
 var context = canvas.getContext( '2d' );
 
-canvas.width = 1140;
-canvas.height = 730;
-
 xSize = ySize = 50;
+
+canvas.width = (xSize+2)*scale;
+canvas.height = (ySize+2)*scale;
 
 var atoms = new Array();
 setupInteractionMatrix();
@@ -40,7 +55,7 @@ for( var i = 0; i < 200; ++i )
 
 //addMolecule(["a1","b1"],10,20,atoms);
 //addMolecule(["e8","b1",/*"a1","d1","d1","b1","c1",*/"f1"],10,20,atoms);
-addMolecule(["e5","a1","b2","c3","d4","fC"],10,20,atoms);
+addMolecule(["e5","a1","b2","c3","d4","fC"],10,20,atoms); // for ladder-free rep the atoms pass their type as a number (a=1,etc)
 
 function onMouseMove( evt )
 {
@@ -48,22 +63,6 @@ function onMouseMove( evt )
 
 var pause = false;
 
-function onMouseDown( evt ) {
-   pause = !pause;
-   console.log("test");
-}
-
-window.onmousedown=onMouseDown;
-
-function onMouseUp( evt ) {
-}
-
-function onMouseOut( evt ) {
-}
-
-function getMousePos( canvas, evt ) {
-};
-      
 window.requestAnimFrame = (function(callback)
 {
     return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
@@ -74,7 +73,6 @@ window.requestAnimFrame = (function(callback)
 
 function update()
 {
-    var speed = 1;
     if (!pause)
     for( var i = 0; i < speed; ++i )
     {
@@ -92,14 +90,11 @@ function animate()
     context.fillRect( 0, 0, canvas.width, canvas.height );
     context.closePath();
 
-    var draw_unbonded_atoms = true;
-    drawAtoms( atoms, context, draw_unbonded_atoms );
+    drawAtoms( atoms, context );
 
     // request new frame
     requestAnimFrame( animate );
 }
-
-animate();
 
 </script> 
 </body>
