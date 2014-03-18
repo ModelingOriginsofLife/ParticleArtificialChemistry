@@ -96,29 +96,37 @@ function sortToGrid(atomarray)
 
 function applyBoundary(atom)
 {
-   if (atom.pos.x<0)
-   {
-      atom.pos.x=0;
-      atom.vel.x*=-1;
-      atom.vel.x+=Math.sqrt(0.2)*(Math.random()*2-1);
-      atom.vel.y+=Math.sqrt(0.2)*(Math.random()*2-1);
-   }
-   if (atom.pos.x>xSize)
-   {
-      atom.pos.x=xSize;
-      atom.vel.x*=-0.6;
-   }
+    if (atom.pos.x<0)
+    {
+        atom.pos.x=0;
+        atom.vel.x*=-1;
+        if( withTemperatureGradient )
+        {
+            // speed up particles on this side (hot)
+            atom.vel.x+=Math.sqrt(0.2)*(Math.random()*2-1);
+            atom.vel.y+=Math.sqrt(0.2)*(Math.random()*2-1);
+        }
+    }
+    if (atom.pos.x>xSize)
+    {
+        atom.pos.x=xSize;
+        atom.vel.x *= -1;
+        if( withTemperatureGradient )
+        {
+            atom.vel.x *= 0.6; // slow down particles on this side (cold)
+        }
+    }
 
-   if (atom.pos.y<0)
-   {
-      atom.pos.y=0;
-      atom.vel.y*=-1;
-   }
-   if (atom.pos.y>ySize)
-   {
-      atom.pos.y=ySize;
-      atom.vel.y*=-1;
-   }
+    if (atom.pos.y<0)
+    {
+        atom.pos.y=0;
+        atom.vel.y*=-1;
+    }
+    if (atom.pos.y>ySize)
+    {
+        atom.pos.y=ySize;
+        atom.vel.y*=-1;
+    }
 }
 
 function iterateBonds(atomarray, dt)
