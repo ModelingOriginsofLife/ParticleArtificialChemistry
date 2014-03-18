@@ -13,6 +13,8 @@
 <canvas id="myCanvas"></canvas>
 <p> 
 <script>
+    
+var withReversibility = false;
 
 var chararray = [ 'a', 'b', 'c', 'd', 'e', 'f' ];
 var canvas  = document.getElementById( 'myCanvas' );
@@ -36,8 +38,8 @@ for( var i = 0; i < 200; ++i )
 }
 
 //addMolecule(["a1","b1"],10,20,atoms);
-addMolecule(["e8","b1",/*"a1","d1","d1","b1","c1",*/"f1"],10,20,atoms);
-// events:
+//addMolecule(["e8","b1",/*"a1","d1","d1","b1","c1",*/"f1"],10,20,atoms);
+addMolecule(["e5","a1","b2","c3","d4","fC"],10,20,atoms);
 
 function onMouseMove( evt )
 {
@@ -71,7 +73,7 @@ window.requestAnimFrame = (function(callback)
 
 function update()
 {
-    var speed = 100;
+    var speed = 1;
     if (!pause)
     for( var i = 0; i < speed; ++i )
     {
@@ -89,7 +91,8 @@ function animate()
     context.fillRect( 0, 0, canvas.width, canvas.height );
     context.closePath();
 
-    drawAtoms( atoms, context );
+    var draw_unbonded_atoms = true;
+    drawAtoms( atoms, context, draw_unbonded_atoms );
 
     // request new frame
     requestAnimFrame( animate );

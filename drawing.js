@@ -14,35 +14,33 @@ function getTypeColor(atomtype)
    }
 }
 
-function drawAtoms( atoms, ctx )
+function drawAtoms( atoms, ctx, show_unbonded_atoms )
 {
     ctx.font="18px Arial";
     for( var i = 0; i < atoms.length; ++i )
     {
         var atom = atoms[i];
-        if (atom.bonds.length)
-	{
-        ctx.fillStyle = getTypeColor(atoms[i].label[0]);
-        ctx.beginPath();
-        ctx.arc( atom.pos.x * scale, atom.pos.y * scale, scale, 0, 2*Math.PI );
-        ctx.fill();
-        ctx.closePath();
-	
-	ctx.fillStyle = "rgb(0,0,0)";
-	ctx.fillText(atoms[i].label[1], 
-	   atom.pos.x * scale-5, 
-	   atom.pos.y * scale+5);
-	
-	for (var j = 0; j < atom.bonds.length; ++j)
-	{
-	   var otheratom = atom.bonds[j];
-	   
-           ctx.beginPath();
-	   ctx.moveTo( atom.pos.x * scale, atom.pos.y * scale);
-	   ctx.lineTo( otheratom.pos.x * scale, otheratom.pos.y * scale );
-	   ctx.stroke();
-	   ctx.closePath();
-	}
-	}
+        if( show_unbonded_atoms || atom.bonds.length )
+        {
+            ctx.fillStyle = getTypeColor(atoms[i].label[0]);
+            ctx.beginPath();
+            ctx.arc( atom.pos.x * scale, atom.pos.y * scale, scale, 0, 2*Math.PI );
+            ctx.fill();
+            ctx.closePath();
+
+            ctx.fillStyle = "rgb(0,0,0)";
+            ctx.fillText( atoms[i].label[1], atom.pos.x * scale-5, atom.pos.y * scale+5 );
+        
+            for (var j = 0; j < atom.bonds.length; ++j)
+            {
+               var otheratom = atom.bonds[j];
+               
+               ctx.beginPath();
+               ctx.moveTo( atom.pos.x * scale, atom.pos.y * scale);
+               ctx.lineTo( otheratom.pos.x * scale, otheratom.pos.y * scale );
+               ctx.stroke();
+               ctx.closePath();
+            }
+        }
     }
 }

@@ -123,15 +123,15 @@ function applyBoundary(atom)
 
 function iterateBonds(atomarray, dt)
 {
-   for (var i=0;i<atomarray.length;i++)
-   {
-      for (var j=0;j<atomarray[i].bonds.length;j++)
-      { 
-         var dr=atomarray[i].pos.sub(atomarray[i].bonds[j].pos);
-	 
-	 atomarray[i].vel = (atomarray[i].vel.sub(dr.mul(0.25*dt)));
-      }
-   }
+    for (var i=0;i<atomarray.length;i++)
+    {
+        for (var j=0;j<atomarray[i].bonds.length;j++)
+        { 
+            var dr=atomarray[i].pos.sub(atomarray[i].bonds[j].pos);
+
+            atomarray[i].vel = atomarray[i].vel.sub( dr.mul( 0.25*dt ) );
+        }
+    }
 }
 
 function iterateMotion(atomarray, dt)
@@ -146,38 +146,40 @@ function iterateMotion(atomarray, dt)
 
 function doCollisions(atomarray)
 {
-   var pgrid=sortToGrid(atomarray);
-   var gridX=xSize/2,gridY=ySize/2;
- 
-   for (var i=0;i<atomarray.length;i++)
-   {
-      var x0,y0,xm,ym;
-      
-      x0=Math.floor(atomarray[i].pos.x/2);
-      y0=Math.floor(atomarray[i].pos.y/2);
-      
-      for (ym=y0-1;ym<=y0+1;ym++)
-        for (xm=x0-1;xm<=x0+1;xm++)
-	{
-	   if ((xm>=0)&&(ym>=0)&&(xm<gridX)&&(ym<gridY))
-	   {
-	   var ptr=pgrid[xm+ym*gridX];
-	   while (ptr)
-	   {
-	      if (ptr!=atomarray[i])
-	      {
-	         var cparam=getCollision(atomarray[i],ptr);
-		 if (cparam)
-		 {
-		    doCollision(atomarray[i],ptr,cparam);		    
-		    doReaction(atomarray[i],ptr);
-		 }
-	      }
-	      ptr=ptr.next;	   
-	   }
-	   }
-	}
-   }
+    var pgrid=sortToGrid(atomarray);
+    var gridX=xSize/2,gridY=ySize/2;
+
+    for (var i=0;i<atomarray.length;i++)
+    {
+        var x0,y0,xm,ym;
+
+        x0=Math.floor(atomarray[i].pos.x/2);
+        y0=Math.floor(atomarray[i].pos.y/2);
+
+        for (ym=y0-1;ym<=y0+1;ym++)
+        {
+            for (xm=x0-1;xm<=x0+1;xm++)
+            {
+                if ((xm>=0)&&(ym>=0)&&(xm<gridX)&&(ym<gridY))
+                {
+                    var ptr=pgrid[xm+ym*gridX];
+                    while (ptr)
+                    {
+                        if (ptr!=atomarray[i])
+                        {
+                            var cparam=getCollision(atomarray[i],ptr);
+                            if (cparam)
+                            {
+                                doCollision(atomarray[i],ptr,cparam);
+                                doReaction(atomarray[i],ptr);
+                            }
+                        }
+                        ptr=ptr.next;
+                    }
+                }
+            }
+        }
+    }
 }
 
 function iterateAll(atomarray, dt)
