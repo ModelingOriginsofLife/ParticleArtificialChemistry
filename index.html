@@ -36,7 +36,8 @@ var chararray = [ 'a', 'b', 'c', 'd', 'e', 'f' ];
 var canvas  = document.getElementById( 'myCanvas' );
 var context = canvas.getContext( '2d' );
 
-xSize = ySize = 50;
+xSize = 100;
+ySize = 60;
 
 canvas.width = (xSize+2)*scale;
 canvas.height = (ySize+2)*scale;
@@ -44,7 +45,7 @@ canvas.height = (ySize+2)*scale;
 var atoms = new Array();
 setupInteractionMatrix();
 
-for( var i = 0; i < 200; ++i )
+for( var i = 0; i < 500; ++i )
 {
     var charidx = Math.floor(Math.random()*chararray.length);
     atoms[i] = new Atom();
@@ -56,6 +57,7 @@ for( var i = 0; i < 200; ++i )
 //addMolecule(["a1","b1"],10,20,atoms);
 //addMolecule(["e8","b1",/*"a1","d1","d1","b1","c1",*/"f1"],10,20,atoms);
 addMolecule(["e5","a1","b2","c3","d4","fC"],10,20,atoms); // for ladder-free rep the atoms pass their type as a number (a=1,etc)
+addMolecule(["e5","b2","d4","b2","d4","fC"],10,30,atoms); // for ladder-free rep the atoms pass their type as a number (a=1,etc)
 
 function onMouseMove( evt )
 {

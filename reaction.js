@@ -304,7 +304,7 @@ var reactions =
     new Reaction( "fF", "fF", "fC", "fC", 1, 0 ), // the final unbonding
     * */
     
-    // A version of Dave Mann's message-passing replicator that works in the presence of thermodynamic reversibility
+    // A version of Dave Mann's message-passing replicator that works (somewhat!) in the presence of thermodynamic reversibility
     new Reaction( "*1", "&D", "*D", "&1", 1, 1 ), // message-passing
     new Reaction( "*2", "&D", "*D", "&2", 1, 1 ),
     new Reaction( "*3", "&D", "*D", "&3", 1, 1 ),
@@ -328,8 +328,12 @@ var reactions =
     new Reaction( "dF", "*D", "d4", "*F", 1, 1 ),
     new Reaction( "eF", "*D", "e5", "*F", 1, 1 ),
     new Reaction( "fF", "fD", "fC", "fF", 1, 0 ), // unbonds when the reset passes over the f-f
-    new Reaction( "fF", "dD", "fG", "dF", 1, 1 ), // reset continues after the f-f unbonding, but requires a 'd' to be next // G for debug only!
-    new Reaction( "eF", "fG", "e5", "fC", 0, 0 ), // reset finishes at the top by bumping into the other end
+    new Reaction( "fF", "dD", "fG", "dF", 1, 1 ), // reset continues after the f-f unbonding, but requires a 'd' to be next
+    new Reaction( "eF", "fG", "e5", "fC", 0, 0 ), // reset finishes at the top by bumping into the other end  - TODO: issue here that might not be our own end, but this seems to work well enough
+    
+    // adding parasites to the above set:
+    //new Reaction( "aD", "c0" , "aH", "c0", 0, 1 ),
+    //new Reaction( "aH", "*&" , "a3", "*&", 1, 0 ),
 ];
 
 function setupInteractionMatrix()
