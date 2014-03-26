@@ -304,7 +304,7 @@ var reactions =
     new Reaction( "fF", "fF", "fC", "fC", 1, 0 ), // the final unbonding
     * */
     
-    // A version of Dave Mann's message-passing replicator that works (somewhat!) in the presence of thermodynamic reversibility
+    // A version of Dave Mann's message-passing replicator that works in the presence of thermodynamic reversibility
     new Reaction( "*1", "&D", "*D", "&1", 1, 1 ), // message-passing
     new Reaction( "*2", "&D", "*D", "&2", 1, 1 ),
     new Reaction( "*3", "&D", "*D", "&3", 1, 1 ),
@@ -334,13 +334,13 @@ var reactions =
     new Reaction( "cH", "*D", "cG", "*H", 1, 1 ),
     new Reaction( "dH", "*D", "dG", "*H", 1, 1 ),
     new Reaction( "eH", "*G", "e5", "*I", 1, 1 ), // reset2 ends, starts reset3 (I)
-    new Reaction( "aI", "&G", "a1", "&I", 1, 1 ),
+    new Reaction( "aI", "&G", "a1", "&I", 1, 1 ), // reset3 passes over a base
     new Reaction( "bI", "&G", "b2", "&I", 1, 1 ),
     new Reaction( "cI", "&G", "c3", "&I", 1, 1 ),
     new Reaction( "dI", "&G", "d4", "&I", 1, 1 ),
-    new Reaction( "fI", "a1", "fC", "d4", 1, 1 ), // reset3 gets to the end
-    new Reaction( "fI", "b2", "fC", "d4", 1, 1 ),
-    new Reaction( "fI", "c3", "fC", "d4", 1, 1 ),
+    new Reaction( "fI", "a1", "fC", "a1", 1, 1 ), // reset3 gets to the end
+    new Reaction( "fI", "b2", "fC", "b2", 1, 1 ),
+    new Reaction( "fI", "c3", "fC", "c3", 1, 1 ),
     new Reaction( "fI", "d4", "fC", "d4", 1, 1 ),
     new Reaction( "fI", "e5", "fC", "e5", 1, 1 ),
 ];
