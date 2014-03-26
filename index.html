@@ -16,28 +16,34 @@
 <canvas id="myCanvas"></canvas>
 <p>
 <button type="button" onclick="pause = !pause;">Pause/Play</button>
-<button type="button" onclick="speed=100;">Fast</button>
-<button type="button" onclick="speed=5;">Medium</button>
-<button type="button" onclick="speed=1;">Slow</button>
+<button type="button" onclick="speed = fastSpeed;">Fast</button>
+<button type="button" onclick="speed = mediumSpeed;">Medium</button>
+<button type="button" onclick="speed = slowSpeed;">Slow</button>
 <p>
-<button type="button" onclick="show_unbonded_atoms = !show_unbonded_atoms;">Show the bath</button>
-<button type="button" onclick="withTemperatureGradient = !withTemperatureGradient;">Toggle temperature gradient</button>
+<button type="button" onclick="show_unbonded_atoms = !show_unbonded_atoms;">Show/hide the bath</button>
+<button type="button" onclick="withTemperatureGradient = !withTemperatureGradient;">Temperature gradient on/off</button>
 <p> 
 <script>
     
+var slowSpeed = 1;
+var mediumSpeed = 5;
+var fastSpeed = 100;
+    
 var withReversibility = true;
 var withTemperatureGradient = true;
-var speed = 5;
+var withCosmicRays = false;
+var cosmicRayBondingProbability = 0.00001;
+var cosmicRayUnbondingProbability = 0.00001;
+var speed = slowSpeed;
 var logReactions = false;
 var scale = 10.0;
-var show_unbonded_atoms = false;
+var show_unbonded_atoms = true;
+var xSize = 100;
+var ySize = 60;
 
 var chararray = [ 'a', 'b', 'c', 'd', 'e', 'f' ];
 var canvas  = document.getElementById( 'myCanvas' );
 var context = canvas.getContext( '2d' );
-
-xSize = 100;
-ySize = 60;
 
 canvas.width = (xSize+2)*scale;
 canvas.height = (ySize+2)*scale;
@@ -54,10 +60,9 @@ for( var i = 0; i < 500; ++i )
     atoms[i].label = chararray[charidx] + "0";
 }
 
-//addMolecule(["a1","b1"],10,20,atoms);
-//addMolecule(["e8","b1",/*"a1","d1","d1","b1","c1",*/"f1"],10,20,atoms);
 addMolecule(["e5","a1","b2","c3","d4","fC"],10,20,atoms); // for ladder-free rep the atoms pass their type as a number (a=1,etc)
 addMolecule(["e5","b2","d4","b2","d4","fC"],10,30,atoms); // for ladder-free rep the atoms pass their type as a number (a=1,etc)
+//addMolecule(["e5","fC"],10,30,atoms); // simplest replicator in this ruleset
 
 function onMouseMove( evt )
 {

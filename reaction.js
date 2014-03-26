@@ -317,7 +317,7 @@ var reactions =
     new Reaction( "*A", "d0", "*D", "dE", 0, 1 ),
     new Reaction( "*B", "e0", "*D", "eF", 0, 1 ), // (if bonded an 'e' then we start the reset)
     new Reaction( "*C", "f0", "*D", "fE", 0, 1 ),
-    new Reaction( "*1", "&E", "*D", "&7", 1, 1 ), // activate for the next one to the bonded
+    new Reaction( "*1", "&E", "*D", "&7", 1, 1 ), // activate for the next one to be bonded
     new Reaction( "*2", "&E", "*D", "&8", 1, 1 ),
     new Reaction( "*3", "&E", "*D", "&9", 1, 1 ),
     new Reaction( "*4", "&E", "*D", "&A", 1, 1 ),
@@ -327,13 +327,22 @@ var reactions =
     new Reaction( "cF", "*D", "c3", "*F", 1, 1 ),
     new Reaction( "dF", "*D", "d4", "*F", 1, 1 ),
     new Reaction( "eF", "*D", "e5", "*F", 1, 1 ),
-    new Reaction( "fF", "fD", "fC", "fF", 1, 0 ), // unbonds when the reset passes over the f-f
-    new Reaction( "fF", "dD", "fG", "dF", 1, 1 ), // reset continues after the f-f unbonding, but requires a 'd' to be next
-    new Reaction( "eF", "fG", "e5", "fC", 0, 0 ), // reset finishes at the top by bumping into the other end  - TODO: issue here that might not be our own end, but this seems to work well enough
-    
-    // adding parasites to the above set:
-    //new Reaction( "aD", "c0" , "aH", "c0", 0, 1 ),
-    //new Reaction( "aH", "*&" , "a3", "*&", 1, 0 ),
+    new Reaction( "fF", "fD", "fC", "fG", 1, 0 ), // unbonds when the reset passes over the f-f
+    new Reaction( "fG", "*D", "fG", "*H", 1, 1 ), // reset2 (G) starts moving
+    new Reaction( "aH", "*D", "aG", "*H", 1, 1 ), // reset2 passes over a base
+    new Reaction( "bH", "*D", "bG", "*H", 1, 1 ),
+    new Reaction( "cH", "*D", "cG", "*H", 1, 1 ),
+    new Reaction( "dH", "*D", "dG", "*H", 1, 1 ),
+    new Reaction( "eH", "*G", "e5", "*I", 1, 1 ), // reset2 ends, starts reset3 (I)
+    new Reaction( "aI", "&G", "a1", "&I", 1, 1 ),
+    new Reaction( "bI", "&G", "b2", "&I", 1, 1 ),
+    new Reaction( "cI", "&G", "c3", "&I", 1, 1 ),
+    new Reaction( "dI", "&G", "d4", "&I", 1, 1 ),
+    new Reaction( "fI", "a1", "fC", "d4", 1, 1 ), // reset3 gets to the end
+    new Reaction( "fI", "b2", "fC", "d4", 1, 1 ),
+    new Reaction( "fI", "c3", "fC", "d4", 1, 1 ),
+    new Reaction( "fI", "d4", "fC", "d4", 1, 1 ),
+    new Reaction( "fI", "e5", "fC", "e5", 1, 1 ),
 ];
 
 function setupInteractionMatrix()
@@ -367,6 +376,12 @@ function remove(arr, item)
          arr.splice(i, 1);
       }
    }
+}
+
+function getRandomState()
+{
+    var states = "0000000123456789ABCDEFGHI";
+    return states.charAt( Math.floor( Math.random() * states.length ) )
 }
 
 function doReaction( atom1, atom2 )
@@ -435,8 +450,8 @@ function doReaction( atom1, atom2 )
 
         if (isbonded && !products.newbond)
         {
-            remove(atom1.bonds,atom2);//.remove(atom2);
-            remove(atom2.bonds,atom1);//.remove(atom1);
+            remove(atom1.bonds,atom2);
+            remove(atom2.bonds,atom1);
         }
 
         if (!isbonded && products.newbond)
@@ -447,5 +462,22 @@ function doReaction( atom1, atom2 )
 
         atom1.label=products.prod1;
         atom2.label=products.prod2;
+    }
+    else if( withCosmicRays )
+    {
+        if( isbonded && Math.random() < cosmicRayUnbondingProbability )
+        {
+            remove(atom1.bonds,atom2);
+            remove(atom2.bonds,atom1);
+            atom1.label = atom1.label[0] + getRandomState();
+            atom2.label = atom2.label[0] + getRandomState();
+        }
+        else if( !isbonded && Math.random() < cosmicRayBondingProbability )
+        {
+            atom1.bonds.push(atom2);
+            atom2.bonds.push(atom1);
+            atom1.label = atom1.label[0] + getRandomState();
+            atom2.label = atom2.label[0] + getRandomState();
+        }
     }
 }
