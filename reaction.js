@@ -343,6 +343,11 @@ var reactions =
     new Reaction( "fI", "c3", "fC", "c3", 1, 1 ),
     new Reaction( "fI", "d4", "fC", "d4", 1, 1 ),
     new Reaction( "fI", "e5", "fC", "e5", 1, 1 ),
+    
+    // Now lets make things hard...
+	new Reaction( "*0", "*0", "*Z", "*Z", 0, 1 ),
+	new Reaction( "*0", "*Z", "*Z", "*Z", 0, 1 ),
+	new Reaction( "*0", "*Z", "*0", "*0", 1, 0 ),
 ];
 
 function setupInteractionMatrix()
@@ -352,7 +357,7 @@ function setupInteractionMatrix()
    for (var j=0;j<7;j++)
      for (var i=0;i<=j;i++)
      {
-        var energy=-0.5;
+        var energy=-0.1;
         interactionMatrix[chararray[i]+chararray[j]]=energy;
         interactionMatrix[chararray[j]+chararray[i]]=energy;
      }     

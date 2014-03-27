@@ -18,7 +18,7 @@ function drawAtoms( atoms, ctx )
     for( var i = 0; i < atoms.length; ++i )
     {
         var atom = atoms[i];
-        if( show_unbonded_atoms || atom.bonds.length )
+        if( show_unbonded_atoms || (atom.bonds.length && atom.label[1]!='Z'))
         {
             var x = atom.pos.x + 1.0; // offset
             var y = atom.pos.y + 1.0; // offset

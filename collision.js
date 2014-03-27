@@ -114,8 +114,8 @@ function applyBoundary(atom)
         if( withTemperatureGradient )
         {
             // speed up particles on this side (hot)
-            atom.vel.x+=Math.sqrt(0.2)*(Math.random()*2-1);
-            atom.vel.y+=Math.sqrt(0.2)*(Math.random()*2-1);
+            atom.vel.x+=Math.sqrt(0.5)*(Math.random()*2-1);
+            atom.vel.y+=Math.sqrt(0.5)*(Math.random()*2-1);
         }
     }
     if (atom.pos.y>ySize)
