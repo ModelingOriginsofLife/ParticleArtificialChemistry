@@ -23,6 +23,73 @@
 <button type="button" onclick="show_unbonded_atoms = !show_unbonded_atoms;">Show/hide the bath</button>
 <button type="button" onclick="withTemperatureGradient = !withTemperatureGradient;">Temperature gradient on/off</button>
 <p> 
+    
+<hr>
+<h4>What's going on?</h4>
+<p>There are two template-replicating polymers present from the start. Hide the bath to see them better. The two are: eacbdf (purple-red-green-blue-yellow-cyan) and ebdbdf (purple-green-yellow-green-yellow-cyan). 
+They replicate by pulling in matching atoms from the surrounding bath.</p>
+
+<p>The colors (abcdef) of the atoms never change. The numbers/letters you see (01233456789ABCDEFHI) are their states. We use the states to direct the replication process. Replication works like this:</p>
+
+<blockquote>eabcdf --> eabcdffcdbae --> eabcdf + fcdbae</blockquote>
+
+<p>Reactions happen between pairs of atoms, and can bond or unbond them and change their states. All reactions are reversible with equal probability. Bonding reactions are energetically downhill, unbonding reactions are uphill.</p>
+
+<p>The reactions in our system are listed below. They are designed to let <i>any</i> sequence e{abcd}*f replicate. Credit to Dave Mann for inventing this form of template-replication (see the Organic Builder paper).</p>
+
+<p><pre><tt>    
+    x1yD    -> xDy1    // message-passing
+    x2yD    -> xDy2
+    x3yD    -> xDy3
+    x4yD    -> xDy4
+    x5yD    -> xDy5
+    x6yD    -> xDy6
+    x7 + a0 -> xDaE    // bond the appropriate type
+    x8 + b0 -> xDbE
+    x9 + c0 -> xDcE
+    xA + d0 -> xDdE
+    xB + e0 -> xDeF    // (if bonded an 'e' then we start reset1 (F) )
+    xC + f0 -> xDfE
+    x1yE    -> xDy7    // activate for the next one to be bonded
+    x2yE    -> xDy8
+    x3yE    -> xDy9
+    x4yE    -> xDyA
+    x5yE    -> xDyB
+    aFxD    -> a1xF    // reset1 passes over a base 'a', setting its state to 1
+    bFxD    -> b2xF
+    cFxD    -> c3xF
+    dFxD    -> d4xF
+    eFxD    -> e5xF
+    fFfD    -> fC + fG  // unbonds when reset1 passes over the central f-f
+    fGxD    -> fGxH    // reset2 (G) starts moving
+    aHxD    -> aGxH    // reset2 passes over a base
+    bHxD    -> bGxH
+    cHxD    -> cGxH
+    dHxD    -> dGxH
+    eHxG    -> e5xI    // reset2 ends, starts reset3 (I)
+    aIxG    -> a1xI    // reset3 passes over a base
+    bIxG    -> b2xI
+    cIxG    -> c3xI
+    dIxG    -> d4xI
+    fIa1    -> fCa1   // reset3 gets to the end
+    fIb2    -> fCb2
+    fIc3    -> fCc3
+    fId4    -> fCd4
+    fIe5    -> fCe5
+</tt></pre></p>
+
+<p>This is a bit complicated, which is annoying. Here are some notes:</p>
+
+<blockquote><pre>
+states 1-6: passive message saying we would like to bond a-f respectively
+states 7-C: active end of the growing molecule, ready to bond the next atom (of type a-f respectively)
+state D: empty space in message-passing
+state E: active end ready to be told what the next atom to be bonded is
+states FGHI: resets 1,2,3,4
+</pre></blockquote>
+
+<p>The simplest possible replicator is e5fC.</p>
+    
 <script>
     
 var slowSpeed = 1;
