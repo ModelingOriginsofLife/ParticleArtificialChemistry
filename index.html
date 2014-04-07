@@ -31,11 +31,11 @@ They replicate by pulling in matching atoms from the surrounding bath.</p>
 
 <p>The colors (abcdef) of the atoms never change. The numbers/letters you see (01233456789ABCDEFHI) are their states. We use the states to direct the replication process. Replication works like this:</p>
 
-<blockquote>eabcdf --> eabcdffcdbae --> eabcdf + fcdbae</blockquote>
+<blockquote>eabcdf --> eabcdffdcbae --> eabcdf + fdcbae</blockquote>
 
 <p>Reactions happen between pairs of atoms, and can bond or unbond them and change their states. All reactions are reversible with equal probability. Bonding reactions are energetically downhill, unbonding reactions are uphill.</p>
 
-<p>The reactions in our system are listed below. They are designed to let <i>any</i> sequence e{abcd}*f replicate. Credit to Dave Mann for inventing this form of template-replication (see the Organic Builder paper).</p>
+<p>The reactions in our system are listed below. Types 'x' and 'y' are variables which match any type a-f. These rules are designed to let <i>any</i> sequence e{abcd}*f replicate. Credit to Dave Mann for inventing this form of template-replication (see the Organic Builder paper).</p>
 
 <p><pre><tt>    
     x1yD    -> xDy1    // message-passing
