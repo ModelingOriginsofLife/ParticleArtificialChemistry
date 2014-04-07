@@ -88,7 +88,10 @@ state E: active end ready to be told what the next atom to be bonded is
 states FGHI: resets 1,2,3,4
 </pre></blockquote>
 
-<p>The simplest possible replicator is e5fC.</p>
+<p>The simplest possible replicator is e5-fC. The two initial polymers are e5-a1-b2-c3-d4-fC and e5-b2-d4-b2-d4-fC, 
+where each letter a-e has state 1-5 respectively, representing their own type. If a polymer in the mismatched form 
+e5-a1-a2-a3-a4-fC was seeded, it would divide into two polymers, eabcdf and eaaaaf respectively which would then
+each breed true. Thus mutation can happen by random state changes alone.</p>
     
 <script>
     
