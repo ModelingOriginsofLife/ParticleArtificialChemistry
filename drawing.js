@@ -47,3 +47,61 @@ function drawAtoms( atoms, ctx )
         }
     }
 }
+
+function updateReactionList()
+{
+	//var rxnlist = "<ul>";
+	
+	/*
+	for (var i=0;i<reactions.length;i++)
+	{
+		if (!reactions[i].reverse)
+		{
+			rxnlist = rxnlist + "<li>" + reactions[i].reac1 + (reactions[i].prebond ? "" : " + ") + 
+				reactions[i].reac2 + " <-> " + reactions[i].prod1 + (reactions[i].postbond ? "" : " + ") + 
+				reactions[i].prod2 + "; Forward: "+reactions[i].count+"; Backward: "+reactions[i].rcount +"</li>";
+		}
+	}
+	*/
+	
+	/*
+	for (var key in transitionMatrix)
+	{
+		rxnlist = rxnlist + "<li>" + key + " " + transitionMatrix[key] + "</li>";
+	}
+	
+	rxnlist = rxnlist + "</ul>";
+	reactionlist.innerHTML = rxnlist;*/
+	
+	var data = "digraph G {";
+	
+	for (var key in transitionMatrix)
+	{
+		var nodes = key.split(" ");
+		
+		data = data + "\"" + nodes[0] + "\"" + " -> " + "\"" + nodes[1] +"\" [label=\""+transitionMatrix[key]+"\"];";
+	}
+		
+	data = data + "}";
+	
+	transitionGraph.setData({ dot: data});
+}
+
+function updateEnergy()
+{
+	var element = document.getElementById("energy");
+	var E=0;
+	
+	for (var key in transitionMatrix)
+	{
+		var nodes = key.split(" ");
+		var reverse = nodes[1] + " " + nodes[0];
+		
+		if (transitionMatrix[reverse])
+		{
+			E += (transitionMatrix[key] - transitionMatrix[reverse]) * Math.log(transitionMatrix[key] / transitionMatrix[reverse]);
+		}
+	}
+	
+	element.innerHTML = String(E);
+}

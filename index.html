@@ -3,6 +3,10 @@
 <head>
 <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
 <meta content="utf-8" http-equiv="encoding">
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+<script src="vis.min.js"></script>
+
 <script src="point2d.js"></script>
 <script src="collision.js"></script>
 <script src="reaction.js"></script>
@@ -14,6 +18,9 @@
 <body onload="animate();"><body> <!-- avoid starting twice -->
 
 <canvas id="myCanvas"></canvas>
+<div id="reactionlist" style="position:absolute;left:1050px;top:0px">
+</div>
+
 <p>
 <button type="button" onclick="pause = !pause;">Pause/Play</button>
 <button type="button" onclick="speed = fastSpeed;">Fast</button>
@@ -22,6 +29,12 @@
 <p>
 <button type="button" onclick="show_unbonded_atoms = !show_unbonded_atoms;">Show/hide the bath</button>
 <button type="button" onclick="withTemperatureGradient = !withTemperatureGradient;">Temperature gradient on/off</button>
+<button type="button" onclick="updateReactionList();">Update Reaction Graph</button>
+<p>
+Estimated energy usage: <span id="energy"></span>
+<div id="reactiongraph">
+</div>
+
 <p> 
     
 <hr>
@@ -91,7 +104,12 @@ states FGHI: resets 1,2,3,4
 <p>The simplest possible replicator is e5fC.</p>
     
 <script>
-    
+
+var reactionList = document.getElementById('reactionlist');
+var transitionGraph = new vis.Graph(document.getElementById('reactiongraph'),
+									{},
+									{physics:{barnesHut:{springLength:75,springConstant:0.015, gravitationalConstant: -2000, centralGravity: 1}}});							
+
 var slowSpeed = 1;
 var mediumSpeed = 5;
 var fastSpeed = 100;
@@ -145,12 +163,15 @@ window.requestAnimFrame = (function(callback)
         };
 })();
 
+var totalTime = 0;
+
 function update()
 {
     if (!pause)
     for( var i = 0; i < speed; ++i )
     {
         iterateAll( atoms, 0.2 );
+        totalTime++;
     }
 }
 
@@ -165,7 +186,8 @@ function animate()
     context.closePath();
 
     drawAtoms( atoms, context );
-
+	
+	updateEnergy();
     // request new frame
     requestAnimFrame( animate );
 }

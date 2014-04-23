@@ -1,5 +1,11 @@
 var interactionMatrix = [];
 
+// sparse matrix of transitions, entries indexed by
+//
+// letter number letter number bond ; letter number letter number bond
+
+var transitionMatrix = [];
+
 function addMolecule(labels, x0, y0, atomarray)
 {
     for (var i=0;i<labels.length;i++)
@@ -28,12 +34,16 @@ function Reaction(reac1, reac2, prod1, prod2, prebond, postbond)
    
    this.prebond=prebond;
    this.postbond=postbond;
+   this.reverse = null;
+   this.count = 0;
+   this.rcount = 0;
 }
 
 Reaction.prototype.reverseReaction = function()
-{
+{	
    var newReaction = new Reaction(this.prod1, this.prod2, this.reac1,
                                   this.reac2, this.postbond, this.prebond);
+   newReaction.reverse = this;
    return newReaction;
 }
 
@@ -202,7 +212,7 @@ Reaction.prototype.getProducts = function(atom1, atom2, isbonded)
         {
             products.prod1=makeProduct(this.prod1,wildcard);
             products.prod2=makeProduct(this.prod2,wildcard);
-
+	    
             return products;
         }
 
@@ -213,7 +223,7 @@ Reaction.prototype.getProducts = function(atom1, atom2, isbonded)
         {
             products.prod1=makeProduct(this.prod2,wildcard);
             products.prod2=makeProduct(this.prod1,wildcard);
-
+	    
             return products;
         }
 
@@ -384,6 +394,13 @@ function getRandomState()
     return states.charAt( Math.floor( Math.random() * states.length ) )
 }
 
+function incrementMatrix(index)
+{
+	if (!transitionMatrix[index]) transitionMatrix[index]=0;
+	
+	transitionMatrix[index]++;
+}
+
 function doReaction( atom1, atom2 )
 {
     var bond=contains(atom1.bonds,atom2);
@@ -431,6 +448,18 @@ function doReaction( atom1, atom2 )
         var j = Math.floor(Math.random()*possible.length);
 
         var products=possible[j].getProducts(atom1,atom2,isbonded);
+
+		if (possible[j].reverse)
+			possible[j].reverse.rcount++;
+		else possible[j].count++;
+		
+		incrementMatrix(atom1.label + " " + products.prod1);
+		incrementMatrix(atom2.label + " " + products.prod2);
+
+		/*if (atom1.label < atom2.label)
+			incrementMatrix(atom1.label + (isbonded ? "" : "+") + atom2.label + " " + products.prod1 + (products.newbond ? "" : "+") + products.prod2);
+		else
+			incrementMatrix(atom2.label + (isbonded ? "" : "+") + atom1.label + " " + products.prod2 + (products.newbond ? "" : "+") + products.prod1);*/
 
         if( withReversibility )
         {
